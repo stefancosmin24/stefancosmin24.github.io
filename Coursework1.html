@@ -105,15 +105,16 @@
     <div id="app">
         <header>
             <h1 v-text="sitename"></h1>
+            <button @click="saveProductToDB">
+                <span class="fas fa-save"></span>
+                Test Save a Product to DB
+            </button>
             <button v-if="cartEmpty" @click="toggleShowProduct">
                 {{totalItemsInTheCart}}
                 <span class="fas fa-shopping-cart"></span>
                 Shopping Cart
             </button>
-            <button @click="saveProductToDB">
-                <span class="fas fa-save"></span>
-                Test Save a Product to DB
-            </button>
+
             <div v-else>
                 <button disabled class="disabled" @click="toggleShowProduct">
                     {{totalItemsInTheCart}}
@@ -338,6 +339,33 @@
                     );
                 },
 
+                submitOrder(name, phone, cart) {
+                    const newOrder = {
+                        "name": name,
+                        "phoneNumber": phone,
+                        "lessonID": cart,
+                        "spaces": cart.length
+                    }
+
+                    fetch("https://webstoreapp-env.eba-azv4wsti.eu-west-2.elasticbeanstalk.com/collections/orders", {
+                        method: "POST", //set the HTTP method as "POST"
+                        headers: {
+                            "Content-Type": "application/json", //set the data type as JSON
+                        },
+                        body: JSON.stringify(newOrder) //need to stringigy the JSON
+                    }).then(
+                        function (response) {
+                            response.json().then(
+                                function (json) {
+                                    alert("Success: " + json.acknowledged);
+                                    console.log("Success: " + json.acknowledged);
+                                    //webstore.products.push(newProduct);
+                                }
+                            )
+                        }
+                    );
+                },
+
 
                 checkForm: function (e) {
                     e.preventDefault();
@@ -355,6 +383,36 @@
                             .then(async res => {
                                 if (res.status === 204) {
                                     alert('Order has been submitted!')
+                                    //save order
+                                    const newOrder = {
+                                        "name": this.order.name,
+                                        "phoneNumber": this.order.phone,
+                                        "lessonID": this.cart,
+                                        "spaces": this.cart.length
+                                    }
+
+                                    fetch("https://webstoreapp-env.eba-azv4wsti.eu-west-2.elasticbeanstalk.com/collections/orders", {
+                                        method: "POST", //set the HTTP method as "POST"
+                                        headers: {
+                                            "Content-Type": "application/json", //set the data type as JSON
+                                        },
+                                        body: JSON.stringify(newOrder) //need to stringigy the JSON
+                                    }).then(
+                                        function (response) {
+                                            response.json().then(
+                                                function (json) {
+                                                    alert("Success: " + json.acknowledged);
+                                                    console.log("Success: " + json.acknowledged);
+                                                    //webstore.products.push(newProduct);
+                                                }
+                                            )
+                                        }
+                                    );
+                                    
+                                    //update spaces
+                                    
+
+
                                 } else if (res.status === 400) {
                                     let errorResponse = await res.json();
                                     this.errors.push(errorResponse.error);
