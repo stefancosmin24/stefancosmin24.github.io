@@ -6,7 +6,7 @@ const path = require("path");
 const port = process.env.PORT || 3000;
 
 let propertiesReader = require("properties-reader");
-let propertiesPath = path.resolve(__dirname, "db.properties");
+let propertiesPath = path.resolve(__dirname, "config/db.properties");
 let properties = propertiesReader(propertiesPath);
 let dbPprefix = properties.get("db.prefix");
 //URL-Encoding of User and PWD
