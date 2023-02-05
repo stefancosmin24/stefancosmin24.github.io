@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Coursework</title>
-    
+
 
 </head>
 
@@ -110,6 +110,10 @@
                 <span class="fas fa-shopping-cart"></span>
                 Shopping Cart
             </button>
+            <button @click="saveProductToDB">
+                <span class="fas fa-save"></span>
+                Test Save a Product to DB
+            </button>
             <div v-else>
                 <button disabled class="disabled" @click="toggleShowProduct">
                     {{totalItemsInTheCart}}
@@ -202,7 +206,7 @@
     <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
 
     <script>
-       // var express = require("express");
+        // var express = require("express");
         //var http = require('http');
         //var app = express();
         const apiUrl = 'https://vuecookbook.netlify.app/.netlify/functions/product-name?name=';
@@ -228,12 +232,12 @@
 
             },
 
-            created: function() {
+            created: function () {
                 fetch("https://webstoreapp-env.eba-azv4wsti.eu-west-2.elasticbeanstalk.com/collections/products").then(
-                    function(response){
+                    function (response) {
                         response.json().then(
-                            function(json){
-                                
+                            function (json) {
+
                                 webstore.products = json;
                             }
                         )
@@ -302,6 +306,36 @@
                     if (this.searchQuery === '' || this.searchQuery === null || this.searchQuery === 0)
                         this.searchQueryEmp = true;
                     this.searchQueryEmp = false;
+                },
+
+                saveProductToDB() {
+                    const newProduct = {
+                        "id": 1022,
+                        "subject": 'English2',
+                        "location": 'Oxford',
+                        "price": 100,
+                        "spaces": 5,
+                        "availableSpaces": 5,
+                        "image": 'icon2.png',
+                    }
+
+                    fetch("https://webstoreapp-env.eba-azv4wsti.eu-west-2.elasticbeanstalk.com/collections/products", {
+                        method: "POST", //set the HTTP method as "POST"
+                        headers: {
+                            "Content-Type": "application/json", //set the data type as JSON
+                        },
+                        body: JSON.stringify(newProduct) //need to stringigy the JSON
+                    }).then(
+                        function (response) {
+                            response.json().then(
+                                function (json) {
+                                    alert("Success: " + json.acknowledged);
+                                    console.log("Success: " + json.acknowledged);
+                                    webstore.products.push(newProduct);
+                                }
+                            )
+                        }
+                    );
                 },
 
 
