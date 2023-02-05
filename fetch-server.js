@@ -3,6 +3,8 @@ const cors = require("cors");
 const morgan = require("morgan");
 const path = require("path");
 
+const port = process.env.PORT || 3000;
+
 let propertiesReader = require("properties-reader");
 let propertiesPath = path.resolve(__dirname, "db.properties");
 let properties = propertiesReader(propertiesPath);
@@ -130,6 +132,6 @@ app.use(function (req, res, next) {
     res.status(404).send("Resource not found");
 });
 
-app.listen(3000, function () {
-    console.log("App started on port 3000");
+app.listen(port, function () {
+    console.log("App started on port: " + port);
 });
