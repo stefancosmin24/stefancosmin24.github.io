@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Coursework</title>
+    <script src="products.js"></script>
+
+</head>
+
+<style>
+    body {
+        background-color: rgb(76, 91, 97);
+
+    }
+
+    .box {
+        background-color: rgb(130, 145, 145);
+        width: 240px;
+        height: 180px;
+        border: 1px solid rgb(0, 87, 128);
+        position: relative;
+        top: 15rem;
+        left: 9rem;
+        border-radius: 1em;
+        padding: 15px;
+        margin: 9px;
+        font-size: 15px;
+        box-shadow: black 5px 15px;
+        background: border-box rgb(148, 155, 150);
+        display: inline-block;
+    }
+
+    button {
+        float: right;
+        background-color: rgb(44, 66, 63);
+        border: 2px solid rgb(0, 0, 0);
+        height: 39px;
+        cursor: pointer;
+        margin-top: -4px;
+        margin-left: 11rem;
+
+        color: rgb(0, 0, 0);
+    }
+
+    .disabled {
+        background-color: rgb(139, 138, 137);
+        cursor: not-allowed;
+    }
+
+    .same2 {
+        position: fixed;
+        background-color: transparent;
+        border: 2px solid transparent;
+    }
+
+    .same {
+        position: relative;
+        background-color: transparent;
+        border: 2px solid transparent;
+    }
+
+    .samebreak {
+        position: relative;
+        background-color: transparent;
+        border: 2px solid transparent;
+        margin-bottom: 2em;
+    }
+
+    .same3 {
+        position: relative;
+        background-color: transparent;
+        border: 2px solid transparent;
+        display: inline;
+    }
+
+    .sorty {
+        background-color: transparent;
+        position: fixed;
+        width: 100px;
+        bottom: 340px;
+        margin-top: 1px;
+        margin-left: 1rem;
+        float: left;
+        color: rgb(0, 0, 0)
+    }
+
+    h2 {
+        position: relative;
+        top: 230px;
+        font-family: Tahoma;
+    }
+
+    .form-control {
+        float: center;
+        padding: 6px;
+        border: none;
+        margin-top: 4px;
+        margin-right: 6px;
+        font-size: 17px;
+    }
+</style>
+
+<body>
+    <div id="app">
+        <header>
+            <h1 v-text="sitename"></h1>
+            <button v-if="cartEmpty" @click="toggleShowProduct">
+                {{totalItemsInTheCart}}
+                <span class="fas fa-shopping-cart"></span>
+                Shopping Cart
+            </button>
+            <div v-else>
+                <button disabled class="disabled" @click="toggleShowProduct">
+                    {{totalItemsInTheCart}}
+                    <span class="fas fa-shopping-cart"></span>
+                    Shopping Cart
+                </button>
+            </div>
+        </header>
+
+        <input class="form-control" type="text" v-model="searchQuery" v-on:keyup="searchQueryEmpty"
+            placeholder="Search" />
+
+
+        <div v-if="showProduct">
+            <main>
+                <div class="sorty">
+                    Sort by:
+
+                    <button v-if="clicked" @click="sortBySubject" class="same">Subject</button>
+                    <div v-else>
+                        <button class="same">Subject✓ </button>
+                    </div>
+                    <button @click="sortByPrice" class="same">Price</button>
+                    <button @click="sortByAvailability" class="same">Availability</button>
+                    <button margin-bottom="9em" @click="sortByLocation" class="samebreak">Location</button>
+
+                    <button @click="Ascending" class="same">Ascending</button>
+                    <button @click="Descending" class="same">Descending</button>
+                </div>
+                <div>
+                    <div v-for="product in sortedProducts" class="box">
+                        <figure>
+                            <img v-bind:src="product.image" style="float:right" alt="" width="60px" height="60px">
+                        </figure>
+
+                        <p>Subject: {{product.subject}}</p>
+                        <p>Location: {{product.location}}</p>
+                        <p>Price: £{{product.price}}</p>
+                        <p>Spaces: {{product.availableSpaces}}</p>
+
+                        <button v-if="canAddToCart(product)" v-on:click="addItemToCart(product)">Add to the
+                            Cart</button>
+                        <div v-else>
+                            <button disabled class="disabled">Add to the Cart</button>
+                            <p class="same2">No more available stock</p>
+                        </div>
+                    </div>
+                </div>
+
+
+            </main>
+        </div>
+
+        <div v-else>
+            <h1>Shopping Cart</h1>
+            <div v-for="product in cart" class="box">
+                <figure>
+                    <img v-bind:src="product.image" style="float:right" alt="" width="60px" height="60px">
+                </figure>
+
+                <p>Subject: {{product.subject}}</p>
+                <p>Location: {{product.location}}</p>
+                <p>Price: £{{product.price}}</p>
+
+                <button v-on:click="removeFromCart(product)">Remove</button>
+
+            </div>
+            <h2>Welcome to the Checkout Page</h2>
+            <h2>
+                <form @submit="checkForm" method="post">
+                    <strong>Name: </strong>
+                    <input type="text" name="name" id="name" v-model="order.name">
+                    <strong>Phone: </strong>
+                    <input type="tel" name="phone" v-model="order.phone">
+                    <input type="submit" value="Checkout">
+                    <p v-if="errors.length">
+                        <b>Please correct the following error:</b>
+                    <ul>
+                        <li v-for="error in errors">{{ error }}</li>
+                    </ul>
+                    </p>
+                </form>
+            </h2>
+
+
+        </div>
+    </div>
+
+
+    <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
+
+    <script>
+       // var express = require("express");
+        //var http = require('http');
+        //var app = express();
+        const apiUrl = 'https://vuecookbook.netlify.app/.netlify/functions/product-name?name=';
+        let webstore = new Vue({
+            el: '#app',
+
+            data: {
+                sitename: "Coursework Website",
+                showProduct: true,
+                clicked: true,
+                products: [],//products,
+                errors: [],
+                cart: [],
+                order: {
+                    name: "",
+                    phone: "",
+                },
+                cartId: 0,
+                sortby: "price",
+                ascend: 1,
+                searchQuery: "",
+                searchQueryEmp: true,
+
+            },
+
+            created: function() {
+                fetch("http://localhost:3000/collections/products").then(
+                    function(response){
+                        response.json().then(
+                            function(json){
+                                //console.log(json);
+                                //alert(json);
+                                webstore.products = json;
+                            }
+                        )
+                    }
+                )
+            },
+
+            methods: {
+                addItemToCart: function (product) {
+                    this.cart.push(product);
+                    product.availableSpaces--;
+                },
+
+                removeFromCart: function (product) {
+                    for (let i = 0; i < this.cart.length; i++)
+                        if (this.cart[i] === product) {
+                            var temp = this.cart[i];
+                            this.cart[i] = this.cart[this.cart.length - 1];
+                            this.cart[this.cart.length - 1] = temp;
+                        }
+                    this.cart.pop();
+                    product.availableSpaces++;
+                    if (this.cart.length === 0)
+                        this.showProduct = this.showProduct ? false : true;
+                },
+
+                toggleShowProduct() {
+                    this.showProduct = this.showProduct ? false : true;
+                },
+                canAddToCart(product) {
+                    return product.availableSpaces > 0;
+                },
+                cartCount(id) {
+                    let count = 0;
+                    for (let i = 0; i < this.cart.length; i++) {
+                        if (this.cart[i] === id) { count++; }
+
+                    }
+                    return count;
+                },
+
+                isClicked() {
+                    this.clicked = this.clicked ? false : true;
+                },
+                sortByPrice() {
+                    this.sortby = "price";
+                },
+                sortByAvailability() {
+                    this.sortby = "availability";
+                },
+                sortByLocation() {
+                    this.sortby = "location";
+                },
+                sortBySubject() {
+                    this.sortby = "subject";
+                },
+                Ascending() {
+                    this.ascend = 1;
+                },
+                Descending() {
+                    this.ascend = -1;
+                },
+
+
+                searchQueryEmpty: function () {
+                    if (this.searchQuery === '' || this.searchQuery === null || this.searchQuery === 0)
+                        this.searchQueryEmp = true;
+                    this.searchQueryEmp = false;
+                },
+
+
+                checkForm: function (e) {
+                    e.preventDefault();
+                    this.errors = [];
+                    var nameRegex = /^[a-z ,.'-]+$/i;
+                    var phoneRegex = /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g;
+                    if (!(nameRegex.test(this.order.name))) {
+                        this.errors.push("Correct name is required.");
+                    }
+                    else if (!(phoneRegex.test(this.order.phone))) {
+                        this.errors.push("Correct phone number is required.");
+                    }
+                    else {
+                        fetch(apiUrl + encodeURIComponent(this.order.name))
+                            .then(async res => {
+                                if (res.status === 204) {
+                                    alert('Order has been submitted!')
+                                } else if (res.status === 400) {
+                                    let errorResponse = await res.json();
+                                    this.errors.push(errorResponse.error);
+                                }
+                            });
+                    }
+                }
+
+
+            },
+
+            computed: {
+                totalItemsInTheCart: function () {
+                    return this.cart.length || "";
+                },
+
+                resultQuery() {
+                    if (this.searchQuery) {
+                        return this.products.filter((product) => {
+                            return this.searchQuery.toLowerCase().split(' ').every(v => this.product.subject.toLowerCase().includes(v))
+                        })
+                    } else {
+                        return this.products;
+                    }
+                },
+
+
+                sortedProducts() {
+
+                    if (this.sortby === "price") {
+                        if (this.ascend === 1)
+                            function comparebyprice(a, b) {
+                                if (a.price > b.price) return 1;
+                                if (a.price < b.price) return -1;
+                                return 0;
+                            } else function comparebyprice(a, b) {
+                                if (a.price > b.price) return -1;
+                                if (a.price < b.price) return 1;
+                                return 0;
+                            }
+                        let products = this.products.filter(product => {
+
+                            return (product.location
+                                .toLowerCase() + product.subject.toLowerCase())
+                                .indexOf(this.searchQuery.toLowerCase()) != -1
+
+                        });
+                        products.sort(comparebyprice);
+
+                        return products;
+
+                    }
+
+                    if (this.sortby === "subject") {
+                        if (this.ascend === 1)
+                            function comparebysubject(a, b) {
+                                if (a.subject > b.subject) return 1;
+                                if (a.subject < b.subject) return -1;
+                                return 0;
+                            } else function comparebysubject(a, b) {
+                                if (a.subject > b.subject) return -1;
+                                if (a.subject < b.subject) return 1;
+                                return 0;
+                            } let products = this.products.filter(product => {
+
+                                return (product.location
+                                    .toLowerCase() + product.subject.toLowerCase())
+                                    .indexOf(this.searchQuery.toLowerCase()) != -1
+
+                            });
+                        products.sort(comparebysubject);
+
+                        return products;
+                    }
+
+                    if (this.sortby === "availability") {
+                        if (this.ascend === 1)
+                            function comparebyavailability(a, b) {
+                                if (a.availableSpaces > b.availableSpaces) return 1;
+                                if (a.availableSpaces < b.availableSpaces) return -1;
+                                return 0;
+                            } else
+                            function comparebyavailability(a, b) {
+                                if (a.availableSpaces > b.availableSpaces) return -1;
+                                if (a.availableSpaces < b.availableSpaces) return 1;
+                                return 0;
+                            }
+                        return this.products.sort(comparebyavailability);
+                    }
+
+                    if (this.sortby === "location") {
+                        if (this.ascend === 1)
+                            function comparebylocation(a, b) {
+                                if (a.location > b.location) return 1;
+                                if (a.location < b.location) return -1;
+                                return 0;
+                            }
+                        else function comparebylocation(a, b) {
+                            if (a.location > b.location) return -1;
+                            if (a.location < b.location) return 1;
+                            return 0;
+                        }
+
+
+                        let products = this.products.filter(product => {
+
+                            return (product.location
+                                .toLowerCase() + product.subject.toLowerCase())
+                                .indexOf(this.searchQuery.toLowerCase()) != -1
+
+                        });
+                        products.sort(comparebylocation);
+
+                        return products;
+
+                    }
+
+
+                },
+
+                cartEmpty: function () {
+                    if (this.cart.length === 0)
+                        return false;
+                    else return true;
+                }
+            }
+        })
+
+        //http.createServer(app).listen(3000);
+    </script>
+</body>
+
+</html>
