@@ -4,7 +4,7 @@ const morgan = require("morgan");
 const path = require("path");
 
 let propertiesReader = require("properties-reader");
-let propertiesPath = path.resolve(__dirname, "conf/db.properties");
+let propertiesPath = path.resolve(__dirname, "db.properties");
 let properties = propertiesReader(propertiesPath);
 let dbPprefix = properties.get("db.prefix");
 //URL-Encoding of User and PWD
