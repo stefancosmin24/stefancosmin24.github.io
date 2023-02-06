@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const path = require("path");
+var fs = require("fs");
+
 
 const port = process.env.PORT || 3000;
 
@@ -33,10 +35,28 @@ app.use(express.json());
 //app.use(morgan("short"));
 
 app.use(function (req, res, next) {
-    console.log("Incoming request: " + req.url);
-    //res.send("Hello, world!");
+    console.log("Received request with HTTP method: " + req.method + "and url: " + req.url);
     next();
 });
+
+app.use(function (req, res, next) {
+    var filePath = path.join(__dirname, req.url);
+    fs.stat(filePath, function (err, fileInfo) {
+        if (err) {
+            next();
+            return;
+        }
+        if (fileInfo.isFile()) {
+            res.sendFile(filePath);
+        } else {
+            next();
+        }
+    });
+});
+
+
+
+
 
 app.param('collectionName', function (req, res, next, collectionName) {
     req.collection = db.collection(collectionName);
@@ -46,7 +66,6 @@ app.param('collectionName', function (req, res, next, collectionName) {
 app.get('/', function (req, res, next) {
     res.send("Select a collection");
 });
-
 
 app.get('/collections/:collectionName', function (req, res, next) {  //returns all lessons
     req.collection.find({}).toArray(function (err, results) {
@@ -59,7 +78,7 @@ app.get('/collections/:collectionName', function (req, res, next) {  //returns a
 
 
 
-app.post('/collections/:collectionName' 
+app.post('/collections/:collectionName'
     , function (req, res, next) {
         // TODO: Validate req.body
         req.collection.insertOne(req.body, function (err, results) {
