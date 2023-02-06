@@ -48,7 +48,7 @@ app.get('/', function (req, res, next) {
 });
 
 
-app.get('/collections/:collectionName', function (req, res, next) {
+app.get('/collections/:collectionName', function (req, res, next) {  //returns all lessons
     req.collection.find({}).toArray(function (err, results) {
         if (err) {
             //return next(err);
@@ -59,7 +59,7 @@ app.get('/collections/:collectionName', function (req, res, next) {
 
 
 
-app.post('/collections/:collectionName'
+app.post('/collections/:collectionName' 
     , function (req, res, next) {
         // TODO: Validate req.body
         req.collection.insertOne(req.body, function (err, results) {
