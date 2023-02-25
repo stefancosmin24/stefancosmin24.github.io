@@ -1,0 +1,98 @@
+[{
+  "_id": {
+    "$oid": "63e0427411f8cc35e9e04548"
+  },
+  "name": "STEFAN-COSMIN C RADU",
+  "phoneNumber": "07766605907",
+  "lessonID": [
+    {
+      "_id": "63dd64434fdc229c09580edc",
+      "id": 1007,
+      "subject": "Music",
+      "location": "Cambridge",
+      "price": 70,
+      "spaces": 5,
+      "availableSpaces": 1,
+      "image": "icon7.png"
+    }
+  ],
+  "spaces": 1
+},{
+  "_id": {
+    "$oid": "63e04fcdabd4e830308ea75e"
+  },
+  "name": "RADU STEFAN COSMIN",
+  "phoneNumber": "07766605902",
+  "lessonID": [
+    {
+      "_id": "63dd64434fdc229c09580edc",
+      "id": 1007,
+      "subject": "Music",
+      "location": "Cambridge",
+      "price": 70,
+      "spaces": 5,
+      "availableSpaces": 8,
+      "image": "icon7.png"
+    },
+    {
+      "_id": "63deefb5b5351a46b2eeab97",
+      "id": 1011,
+      "subject": "Sports",
+      "location": "London",
+      "price": 70,
+      "spaces": 5,
+      "availableSpaces": 4,
+      "image": "icon11.png"
+    },
+    {
+      "_id": "63dd646b4fdc229c09580ee2",
+      "id": 1010,
+      "subject": "Geography",
+      "location": "Essex",
+      "price": 70,
+      "spaces": 5,
+      "availableSpaces": 4,
+      "image": "icon10.png"
+    }
+  ],
+  "spaces": 3
+},{
+  "_id": {
+    "$oid": "63e05027abd4e830308ea75f"
+  },
+  "name": "Dan",
+  "phoneNumber": "21113",
+  "lessonID": [
+    {
+      "_id": "63dd64434fdc229c09580edc",
+      "id": 1007,
+      "subject": "Music",
+      "location": "Cambridge",
+      "price": 70,
+      "spaces": 5,
+      "availableSpaces": 7,
+      "image": "icon7.png"
+    },
+    {
+      "_id": "63dd63ef4fdc229c09580ed0",
+      "id": 1001,
+      "subject": "Math",
+      "location": "London",
+      "price": 100,
+      "spaces": 10,
+      "availableSpaces": 7,
+      "image": "icon.png"
+    },
+    {
+      "_id": "63dd64184fdc229c09580ed6",
+      "id": 1004,
+      "subject": "Databases",
+      "location": "York",
+      "price": 100,
+      "spaces": 5,
+      "availableSpaces": 2,
+      "image": "icon4.png"
+    }
+  ],
+  "spaces": 3
+}]

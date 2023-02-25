@@ -1,3 +1,5 @@
 To GitHub Pages: https://stefancosmin24.github.io/Coursework1.html
 
 To GitHub Rep: https://github.com/stefancosmin24/stefancosmin24.github.io
+
+To AWS : https://webstoreapp-env.eba-azv4wsti.eu-west-2.elasticbeanstalk.com/collections/products
