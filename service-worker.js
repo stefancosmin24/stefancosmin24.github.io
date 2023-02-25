@@ -14,7 +14,9 @@ var cacheFiles = [
     "icon8.png",
     "icon9.png",
     "icon10.png",
-    "icon11.png"
+    "icon11.png",
+    "fetch-server.js",
+    "shopping cart.png"
 ];
 self.addEventListener("install", function (e) {
     console.log("[Service Worker] Install");
