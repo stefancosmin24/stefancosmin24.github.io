@@ -235,6 +235,9 @@
             },
 
             created: function () {
+                if ("serviceWorker" in navigator) {
+                    navigator.serviceWorker.register("service-worker.js");
+                }
                 fetch("https://webstoreapp-env.eba-azv4wsti.eu-west-2.elasticbeanstalk.com/collections/products").then(
                     function (response) {
                         response.json().then(
@@ -246,6 +249,8 @@
                     }
                 )
             },
+
+
 
             methods: {
                 addItemToCart: function (product) {
@@ -400,30 +405,30 @@
                                             "availableSpaces": item.availableSpaces,
                                             "image": item.image,
                                         }
-                                    
-                                    fetch("https://webstoreapp-env.eba-azv4wsti.eu-west-2.elasticbeanstalk.com/collections/products/" + item._id, {
-                                        method: "PUT", //set the HTTP method as "POST"
-                                        headers: {
-                                            "Content-Type": "application/json", //set the data type as JSON
-                                        },
-                                        body: JSON.stringify(newItem) //need to stringigy the JSON
-                                    }).then(
-                                        function (response) {
-                                            response.json().then(
-                                                function (json) {
-                                                    alert("Success: " + json.acknowledged);
-                                                    console.log("Success: " + json.acknowledged);
-                                                    //webstore.products.push(newProduct);
-                                                }
-                                            )
-                                        }
-                                    );
-                                }
+
+                                        fetch("https://webstoreapp-env.eba-azv4wsti.eu-west-2.elasticbeanstalk.com/collections/products/" + item._id, {
+                                            method: "PUT", //set the HTTP method as "POST"
+                                            headers: {
+                                                "Content-Type": "application/json", //set the data type as JSON
+                                            },
+                                            body: JSON.stringify(newItem) //need to stringigy the JSON
+                                        }).then(
+                                            function (response) {
+                                                response.json().then(
+                                                    function (json) {
+                                                        alert("Success: " + json.acknowledged);
+                                                        console.log("Success: " + json.acknowledged);
+                                                        //webstore.products.push(newProduct);
+                                                    }
+                                                )
+                                            }
+                                        );
+                                    }
 
 
-                            } else if(res.status === 400) {
-                                let errorResponse = await res.json();
-        this.errors.push(errorResponse.error);
+                                } else if (res.status === 400) {
+                                    let errorResponse = await res.json();
+                                    this.errors.push(errorResponse.error);
                                 }
                             });
                     }
@@ -432,121 +437,121 @@
 
             },
 
-        computed: {
-            totalItemsInTheCart: function () {
-                return this.cart.length || "";
-            },
+            computed: {
+                totalItemsInTheCart: function () {
+                    return this.cart.length || "";
+                },
 
-            resultQuery() {
-                if (this.searchQuery) {
-                    return this.products.filter((product) => {
-                        return this.searchQuery.toLowerCase().split(' ').every(v => this.product.subject.toLowerCase().includes(v))
-                    })
-                } else {
-                    return this.products;
-                }
-            },
+                resultQuery() {
+                    if (this.searchQuery) {
+                        return this.products.filter((product) => {
+                            return this.searchQuery.toLowerCase().split(' ').every(v => this.product.subject.toLowerCase().includes(v))
+                        })
+                    } else {
+                        return this.products;
+                    }
+                },
 
 
-            sortedProducts() {
+                sortedProducts() {
 
-                if (this.sortby === "price") {
-                    if (this.ascend === 1)
-                        function comparebyprice(a, b) {
-                            if (a.price > b.price) return 1;
-                            if (a.price < b.price) return -1;
-                            return 0;
-                        } else function comparebyprice(a, b) {
-                            if (a.price > b.price) return -1;
-                            if (a.price < b.price) return 1;
-                            return 0;
-                        }
-                    let products = this.products.filter(product => {
-
-                        return (product.location
-                            .toLowerCase() + product.subject.toLowerCase())
-                            .indexOf(this.searchQuery.toLowerCase()) != -1
-
-                    });
-                    products.sort(comparebyprice);
-
-                    return products;
-
-                }
-
-                if (this.sortby === "subject") {
-                    if (this.ascend === 1)
-                        function comparebysubject(a, b) {
-                            if (a.subject > b.subject) return 1;
-                            if (a.subject < b.subject) return -1;
-                            return 0;
-                        } else function comparebysubject(a, b) {
-                            if (a.subject > b.subject) return -1;
-                            if (a.subject < b.subject) return 1;
-                            return 0;
-                        } let products = this.products.filter(product => {
+                    if (this.sortby === "price") {
+                        if (this.ascend === 1)
+                            function comparebyprice(a, b) {
+                                if (a.price > b.price) return 1;
+                                if (a.price < b.price) return -1;
+                                return 0;
+                            } else function comparebyprice(a, b) {
+                                if (a.price > b.price) return -1;
+                                if (a.price < b.price) return 1;
+                                return 0;
+                            }
+                        let products = this.products.filter(product => {
 
                             return (product.location
                                 .toLowerCase() + product.subject.toLowerCase())
                                 .indexOf(this.searchQuery.toLowerCase()) != -1
 
                         });
-                    products.sort(comparebysubject);
+                        products.sort(comparebyprice);
 
-                    return products;
-                }
+                        return products;
 
-                if (this.sortby === "availability") {
-                    if (this.ascend === 1)
-                        function comparebyavailability(a, b) {
-                            if (a.availableSpaces > b.availableSpaces) return 1;
-                            if (a.availableSpaces < b.availableSpaces) return -1;
-                            return 0;
-                        } else
-                        function comparebyavailability(a, b) {
-                            if (a.availableSpaces > b.availableSpaces) return -1;
-                            if (a.availableSpaces < b.availableSpaces) return 1;
+                    }
+
+                    if (this.sortby === "subject") {
+                        if (this.ascend === 1)
+                            function comparebysubject(a, b) {
+                                if (a.subject > b.subject) return 1;
+                                if (a.subject < b.subject) return -1;
+                                return 0;
+                            } else function comparebysubject(a, b) {
+                                if (a.subject > b.subject) return -1;
+                                if (a.subject < b.subject) return 1;
+                                return 0;
+                            } let products = this.products.filter(product => {
+
+                                return (product.location
+                                    .toLowerCase() + product.subject.toLowerCase())
+                                    .indexOf(this.searchQuery.toLowerCase()) != -1
+
+                            });
+                        products.sort(comparebysubject);
+
+                        return products;
+                    }
+
+                    if (this.sortby === "availability") {
+                        if (this.ascend === 1)
+                            function comparebyavailability(a, b) {
+                                if (a.availableSpaces > b.availableSpaces) return 1;
+                                if (a.availableSpaces < b.availableSpaces) return -1;
+                                return 0;
+                            } else
+                            function comparebyavailability(a, b) {
+                                if (a.availableSpaces > b.availableSpaces) return -1;
+                                if (a.availableSpaces < b.availableSpaces) return 1;
+                                return 0;
+                            }
+                        return this.products.sort(comparebyavailability);
+                    }
+
+                    if (this.sortby === "location") {
+                        if (this.ascend === 1)
+                            function comparebylocation(a, b) {
+                                if (a.location > b.location) return 1;
+                                if (a.location < b.location) return -1;
+                                return 0;
+                            }
+                        else function comparebylocation(a, b) {
+                            if (a.location > b.location) return -1;
+                            if (a.location < b.location) return 1;
                             return 0;
                         }
-                    return this.products.sort(comparebyavailability);
-                }
 
-                if (this.sortby === "location") {
-                    if (this.ascend === 1)
-                        function comparebylocation(a, b) {
-                            if (a.location > b.location) return 1;
-                            if (a.location < b.location) return -1;
-                            return 0;
-                        }
-                    else function comparebylocation(a, b) {
-                        if (a.location > b.location) return -1;
-                        if (a.location < b.location) return 1;
-                        return 0;
+
+                        let products = this.products.filter(product => {
+
+                            return (product.location
+                                .toLowerCase() + product.subject.toLowerCase())
+                                .indexOf(this.searchQuery.toLowerCase()) != -1
+
+                        });
+                        products.sort(comparebylocation);
+
+                        return products;
+
                     }
 
 
-                    let products = this.products.filter(product => {
+                },
 
-                        return (product.location
-                            .toLowerCase() + product.subject.toLowerCase())
-                            .indexOf(this.searchQuery.toLowerCase()) != -1
-
-                    });
-                    products.sort(comparebylocation);
-
-                    return products;
-
+                cartEmpty: function () {
+                    if (this.cart.length === 0)
+                        return false;
+                    else return true;
                 }
-
-
-            },
-
-            cartEmpty: function () {
-                if (this.cart.length === 0)
-                    return false;
-                else return true;
             }
-        }
         })
 
         //http.createServer(app).listen(3000);
