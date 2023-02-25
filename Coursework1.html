@@ -110,6 +110,21 @@
                 <span class="fas fa-save"></span>
                 Test Save a Product to DB
             </button>
+            <button @click="deleteAllCaches" ">
+                <span class=" fas fa-save"></span>
+                Delete All Caches
+            </button>
+            <button @click="reloadPage" class="test-elem">
+                <span class="fas fa-sync"></span>
+                Reload Page
+            </button>
+            <strong> HTTPS Test:</strong>
+            <a v-bind:href="serverURL" target="_blank">link
+            </a>
+            <button @click="unregisterAllServiceWorkers">
+                <span class="fab fa-uniregistry"></span>
+                Unregister All ServiceWorkers
+            </button>
             <button v-if="cartEmpty" @click="toggleShowProduct">
                 {{totalItemsInTheCart}}
                 <span class="fas fa-shopping-cart"></span>
@@ -219,30 +234,31 @@
                 sitename: "Coursework Website",
                 showProduct: true,
                 clicked: true,
+                serverURL: "https://webstoreapp-env.eba-azv4wsti.eu-west-2.elasticbeanstalk.com/collections/products",
                 products: [
-                    {
-                        "_id": {
-                            "$oid": "63dd63fd4fdc229c09580ed2"
-                        },
-                        "id": 1002,
-                        "subject": "English",
-                        "location": "Oxford",
-                        "price": 90,
-                        "spaces": 5,
-                        "availableSpaces": 5,
-                        "image": "icon2.png"
-                    }, {
-                        "_id": {
-                            "$oid": "63dd640d4fdc229c09580ed4"
-                        },
-                        "id": 1003,
-                        "subject": "Comp Science",
-                        "location": "Bristol",
-                        "price": 100,
-                        "spaces": 5,
-                        "availableSpaces": 3,
-                        "image": "icon3.png"
-                    }
+                    /* {
+                         "_id": {
+                             "$oid": "63dd63fd4fdc229c09580ed2"
+                         },
+                         "id": 1002,
+                         "subject": "English",
+                         "location": "Oxford",
+                         "price": 90,
+                         "spaces": 5,
+                         "availableSpaces": 5,
+                         "image": "icon2.png"
+                     }, {
+                         "_id": {
+                             "$oid": "63dd640d4fdc229c09580ed4"
+                         },
+                         "id": 1003,
+                         "subject": "Comp Science",
+                         "location": "Bristol",
+                         "price": 100,
+                         "spaces": 5,
+                         "availableSpaces": 3,
+                         "image": "icon3.png"
+                     }*/
                 ],//products,
                 errors: [],
                 cart: [],
@@ -277,6 +293,25 @@
 
 
             methods: {
+                deleteAllCaches() {
+                    caches.keys().then(function (names) {
+                        for (let name of names)
+                            caches.delete(name);
+                    })
+                    console.log("All Caches Deleted");
+                },
+                reloadPage() {
+                    window.location.reload();
+                },
+                unregisterAllServiceWorkers() {
+                    navigator.serviceWorker.getRegistrations().then(function (registrations) {
+                        for (let registration of registrations) {
+                            registration.unregister()
+                        }
+                    });
+                    console.log("ServiceWorkers Unregistered");
+                },
+
                 addItemToCart: function (product) {
                     this.cart.push(product);
                     product.availableSpaces--;
