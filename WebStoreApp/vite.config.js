@@ -6,7 +6,7 @@ import vue2 from '@vitejs/plugin-vue2'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: "/WebStoreApp/index.html",
+  base: "/WebStoreApp/index.html" ,
   plugins: [
     vue2(),
     legacy({
