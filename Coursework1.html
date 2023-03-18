@@ -223,9 +223,15 @@
     <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
 
     <script>
-        // var express = require("express");
-        //var http = require('http');
-        //var app = express();
+        const MyLocalComponent = {
+            props: ["product-number"],
+            template: `<div>I can read: {{productNumber}}</div>`,
+            methods:{}
+        }
+
+        Vue.component("my-component", {
+            template: `<div> <p>SCTH </p> </div>`
+        });
         const apiUrl = 'https://vuecookbook.netlify.app/.netlify/functions/product-name?name=';
         let webstore = new Vue({
             el: '#app',
